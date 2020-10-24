@@ -17,6 +17,7 @@ const router = require('koa-router')()
 
 // 引入子模块(子路由)
 const users = require('./route/api/users.js')
+const appointment = require('./route/api/appointement/personal')
 
 // ====================================================
 
@@ -37,6 +38,7 @@ app
 
 
 app.use(users.routes())
+app.use(appointment.routes())
 
 // 配置路由
 app.use(router.routes()).use(router.allowedMethods());

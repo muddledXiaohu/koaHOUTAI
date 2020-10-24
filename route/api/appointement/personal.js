@@ -1,6 +1,5 @@
-
+// 预约功能
 const koa = require( 'koa')
-
 
 const bodyParser= require('koa-bodyparser')
 
@@ -9,94 +8,97 @@ const app = new koa()
 
 const router = require('koa-router')()
 
-
-const DB = require('../db')
+const DB = require('../../db')
 app.use(bodyParser());      // 将模块作为koa的中间件引入
 
-// =====================================================
-
-var qr = require('qr-image');
-
-const uuid = require('node-uuid')
-
-// =====================================================
 
 // 查询全部信息
-router.get("/users", async (ctx) => {
-    const data = await DB.find('users', {})
+router.get("/appointment", async (ctx) => {
+    const data = await DB.find('appointment', {})
     ctx.body = JSON.stringify(data); // 响应请求，发送处理后的信息给客户端
 })
 
 // id查询
-router.get("/users/:id", async (ctx) => {
+router.get("/appointment/:id", async (ctx) => {
     let ids = ctx.params
     let id = parseInt(ids.id)
-    await DB.find('users', {id: id}).then((data) => {
+    await DB.find('appointment', {id: id}).then((data) => {
         ctx.body = JSON.stringify(data); // 响应请求，发送处理后的信息给客户端
     })
 })
 
-// 创建用户
-router.post("/users/establish", async (ctx) => {
+// 个人预约
+router.post("/appointment/establish", async (ctx) => {
     let body = ctx.request.body
     
-    const dataId = await DB.find('users', {})
+    const dataId = await DB.find('appointment', {})
     const lastId = dataId[dataId.length - 1]
     const ids = lastId.id + 1
 
     const params = {
         username:body.username,
-        password:body.password,
         mobile:body.mobile,
+        curriculum:body.curriculum,
+        type:1,
         id:ids
     }
-    const data = await DB.insert('users', params)
+    const data = await DB.insert('appointment', params)
     ctx.body = JSON.stringify(data); // 响应请求，发送处理后的信息给客户端
 })
 
-// 修改用户
-router.post("/users/modify/:id", async (ctx) => {
+// 修改个人预约预留信息
+router.post("/appointment/modify/:id", async (ctx) => {
     // 查询id
     let ids = ctx.params
     let id = parseInt(ids.id)
     var ChangedData = []
-    await DB.find('users', {id: id}).then((data) => {
+    await DB.find('appointment', {id: id}).then((data) => {
         ChangedData = data
     })
     let username = ''
-    let password = ''
+    let mobile = ''
+    let curriculum = ''
     for (const key in ChangedData) {
        username = ChangedData[key].username
-       password = ChangedData[key].password
+       mobile = ChangedData[key].mobile
+       curriculum = ChangedData[key].curriculum
     }
     const original = {
         username: username,
-        password: password
+        mobile: mobile,
+        curriculum: curriculum
     }
 
     // 修改内容
     let body = ctx.request.body
-    const datas = await DB.update('users', original, body)
+    const datas = await DB.update('appointment', original, body)
     console.log(datas.result);
 
 
 })
 
-// 删除用户
-router.delete("/users/remove/:id", async (ctx) => {
+// 删除个人预约
+router.delete("/appointment/remove/:id", async (ctx) => {
     let ids = ctx.params
     let id = parseInt(ids.id)
-    const data = await DB.remove('users', {id: id})
+    const data = await DB.remove('appointment', {id: id})
     console.log(data.result);
 })
 
 
-// =====================================================
+router.post('/menus',async(ctx)=>{
+    const form1 = ctx.request.body;
+    console.log(form1);
+    //const form1 = JSON.parse(form)
+    
+    //ctx.response.body = form.userName;
+    ctx.response.body=form1;
+    // ctx.body = {//
+    // resultCode:200
+    // }
+    });
 
 
-
-
-// =====================================================
 
 
 module.exports = router
