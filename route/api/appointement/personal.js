@@ -35,10 +35,11 @@ router.post("/appointment/establish", async (ctx) => {
     const lastId = dataId[dataId.length - 1]
     const ids = lastId.id + 1
 
+    console.log(body)
     const params = {
-        username:body.username,
+        username:body.name,
         mobile:body.mobile,
-        curriculum:body.curriculum,
+        curriculum:body.region,
         type:1,
         id:ids
     }
@@ -84,19 +85,6 @@ router.delete("/appointment/remove/:id", async (ctx) => {
     const data = await DB.remove('appointment', {id: id})
     console.log(data.result);
 })
-
-
-router.post('/menus',async(ctx)=>{
-    const form1 = ctx.request.body;
-    console.log(form1);
-    //const form1 = JSON.parse(form)
-    
-    //ctx.response.body = form.userName;
-    ctx.response.body=form1;
-    // ctx.body = {//
-    // resultCode:200
-    // }
-    });
 
 
 

@@ -27,7 +27,7 @@ router.get("/group/:id", async (ctx) => {
     })
 })
 
-// 个人预约
+// 团体预约
 router.post("/group/establish", async (ctx) => {
     let body = ctx.request.body
     
@@ -36,17 +36,22 @@ router.post("/group/establish", async (ctx) => {
     const ids = lastId.id + 1
 
     const params = {
-        username:body.username,
+        username:body.name,
         mobile:body.mobile,
-        curriculum:body.curriculum,
-        type:1,
+        // 名单
+        group:body.group,
+        // 预约内容
+        curriculum:body.region,
+        // 介绍信
+        introduce: body.introduce,
+        type:2,
         id:ids
     }
     const data = await DB.insert('group', params)
     ctx.body = JSON.stringify(data); // 响应请求，发送处理后的信息给客户端
 })
 
-// 修改个人预约预留信息
+// 修改团体预约预留信息
 router.post("/group/modify/:id", async (ctx) => {
     // 查询id
     let ids = ctx.params
@@ -77,7 +82,7 @@ router.post("/group/modify/:id", async (ctx) => {
 
 })
 
-// 删除个人预约
+// 删除团体预约
 router.delete("/group/remove/:id", async (ctx) => {
     let ids = ctx.params
     let id = parseInt(ids.id)

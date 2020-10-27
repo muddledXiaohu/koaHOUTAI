@@ -90,6 +90,36 @@ router.delete("/users/remove/:id", async (ctx) => {
     console.log(data.result);
 })
 
+// 用户登录
+router.post('/login', async ctx => {
+    const data = ctx.request.body
+    await DB.find('users', {username: data.username}).then((datas) => {
+        for (const key in datas) {
+            const password = datas[key].password
+        }
+        if (datas.length === 0) {
+            ctx.body = {
+                'code': 0,
+                'data': {},
+                'mesg': '没有该用户，去注册吧'
+            }    
+        } else if (password !== data.password) {
+            ctx.body = {
+                'code': 0,
+                'data': {},
+                'mesg': '密码错误'
+            }
+
+        } else {
+            ctx.body = {
+                'code': 1,
+                'data': data,
+                'mesg': '登录成功'
+            }
+        }
+    })
+  })
+
 
 // =====================================================
 
