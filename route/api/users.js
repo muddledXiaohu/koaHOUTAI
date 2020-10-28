@@ -11,6 +11,10 @@ const router = require('koa-router')()
 
 
 const DB = require('../db')
+
+// 引入token生成
+const jwt = require('jsonwebtoken')
+
 app.use(bodyParser());      // 将模块作为koa的中间件引入
 
 // =====================================================
@@ -95,26 +99,37 @@ router.post('/login', async ctx => {
     const data = ctx.request.body
     await DB.find('users', {username: data.username}).then((datas) => {
         for (const key in datas) {
-            const password = datas[key].password
+            var password = datas[key].password
         }
         if (datas.length === 0) {
             ctx.body = {
                 'code': 0,
                 'data': {},
-                'mesg': '没有该用户，去注册吧'
+                'mesg': '没有该用户，请注册',
+                status: 400
             }    
         } else if (password !== data.password) {
             ctx.body = {
                 'code': 0,
                 'data': {},
-                'mesg': '密码错误'
+                'mesg': '密码错误',
+                status: 400
             }
 
         } else {
+            const secret = 'secret'
+            function getToken(payload = {}) {
+                return jwt.sign(payload, secret, { expiresIn: '4h' })
+            }
+            let token = getToken({uid: "12306", username: "EsunR"}) // 将关键信息记录与 Token 内
+            console.log(token)
             ctx.body = {
                 'code': 1,
-                'data': data,
-                'mesg': '登录成功'
+                'data': {
+                    token
+                },
+                'mesg': '登录成功',
+                status: 200
             }
         }
     })
