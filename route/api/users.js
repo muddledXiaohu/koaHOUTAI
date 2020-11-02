@@ -82,7 +82,7 @@ router.post("/users/modify/:id", async (ctx) => {
     let body = ctx.request.body
     const datas = await DB.update('users', original, body)
     console.log(datas.result);
-
+    ctx.body = JSON.stringify(datas); // 响应请求，发送处理后的信息给客户端
 
 })
 
@@ -136,10 +136,38 @@ router.post('/login', async ctx => {
   })
 
 
+// 分数查询
+
+
 // =====================================================
 
 
+// 生成uuid二维码
+var qwe = ''
+router.get('/RQCode', async ctx => {
+    var ID = uuid.v1();
+    this.qwe = ID
+    try {
+        var img = qr.image('http://192.168.3.75:8080/#/start?uid=' + ID,{size :10});
+      
+        ctx.type= 'image/png';
+        ctx.body = img;
+    } catch (e) {
+        ctx.type='text/html;charset=utf-8';
+        ctx.body='<h1>414 Request-URI Too Large</h1>';
+    }
 
+})
+
+
+// 扫码调用接口
+router.post('/RQLongin', async ctx => {
+    let body = ctx.request.body
+    console.log(body, qwe)
+    const user = body.username
+    await DB.insert('RQCodeId', {user: qwe})
+    ctx.body = JSON.stringify(user); // 响应请求，发送处理后的信息给客户端
+})
 
 // =====================================================
 
