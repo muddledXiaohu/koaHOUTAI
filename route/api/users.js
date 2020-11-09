@@ -176,6 +176,34 @@ router.get("/fraction/:id", async (ctx) => {
     })
 })
 
+// 预约号登录查询
+// 用户登录
+router.post('/fractionss', async ctx => {
+    const data = ctx.request.body
+    console.log(data);
+    await DB.find('fraction', {number: Number(data.number)}).then( async (datas) => {
+        console.log(datas);
+        if (datas.length === 0) {
+            ctx.body = {
+                'code': 0,
+                'data': {},
+                'mesg': '没有该预约id，请预约',
+                status: 400
+            }    
+        }  else {
+            const token = await DB.find('fraction', {number: data.number})
+            ctx.body = {
+                'code': 1,
+                'data': {
+                    token
+                },
+                'mesg': '登录成功',
+                status: 200
+            }
+        }
+    })
+  })
+
 // 存入用户分数
 router.post("/fraction/establish", async (ctx) => {
     let body = ctx.request.body
