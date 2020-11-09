@@ -35,11 +35,21 @@ router.post("/appointment/establish", async (ctx) => {
     const lastId = dataId[dataId.length - 1]
     const ids = lastId.id + 1
 
-    console.log(body)
+    // 随机数
+    var Num="";
+    for(var i=0;i<6;i++){
+        Num += Math.floor(Math.random()*10);
+    }
+
+    console.log(Num)
     const params = {
         username:body.name,
         mobile:body.mobile,
         curriculum:body.region,
+        // 预约号
+        number:Num,
+        // 对应账号id
+        userId: body._id,
         type:1,
         id:ids
     }
@@ -74,7 +84,7 @@ router.post("/appointment/modify/:id", async (ctx) => {
     let body = ctx.request.body
     const datas = await DB.update('appointment', original, body)
     console.log(datas.result);
-
+    ctx.body = JSON.stringify(datas); // 响应请求，发送处理后的信息给客户端
 
 })
 
@@ -83,7 +93,7 @@ router.delete("/appointment/remove/:id", async (ctx) => {
     let ids = ctx.params
     let id = parseInt(ids.id)
     const data = await DB.remove('appointment', {id: id})
-    console.log(data.result);
+    ctx.body = JSON.stringify(data); // 响应请求，发送处理后的信息给客户端
 })
 
 

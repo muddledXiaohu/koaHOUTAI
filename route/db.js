@@ -59,6 +59,23 @@ class Db {
         })
     }
 
+        // 分页查询数据
+    count(collectionname,json,limit,skip) {
+        return new Promise((res, req) =>{
+            this.connect().then((db) => {
+                const result = db.collection(collectionname).find(json).limit(limit).skip(skip)
+                result.toArray(function (err,docs) {
+                // callback(err,docs);
+                if (err) {
+                    req(err)
+                    return
+                }
+                res(docs)
+                })
+            })
+        })
+    }
+
     // 更新数据
     update(collecionName, json1, json2) {
         return new Promise((res, req) => {

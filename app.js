@@ -19,6 +19,7 @@ const router = require('koa-router')()
 const users = require('./route/api/users.js')
 const appointment = require('./route/api/appointement/personal')
 const group = require('./route/api/appointement/group')
+const IntegratedM = require('./route/api/IntegratedM/IntegratedM')
 
 // ====================================================
 
@@ -41,6 +42,7 @@ app
 app.use(users.routes())
 app.use(appointment.routes())
 app.use(group.routes())
+app.use(IntegratedM.routes())
 
 // 配置路由
 app.use(router.routes()).use(router.allowedMethods());
