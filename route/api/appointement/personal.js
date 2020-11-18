@@ -46,6 +46,7 @@ router.post("/appointment/establish", async (ctx) => {
         username:body.name,
         mobile:body.mobile,
         curriculum:body.region,
+        fraction: 0,
         // 预约号
         number:Num,
         // 对应账号id
@@ -54,7 +55,11 @@ router.post("/appointment/establish", async (ctx) => {
         id:ids
     }
     const data = await DB.insert('appointment', params)
-    ctx.body = JSON.stringify(data); // 响应请求，发送处理后的信息给客户端
+
+    // 将个人预约添加到fraction 做小程序登录用
+    const datas = await DB.insert('fraction', params)
+
+    ctx.body = JSON.stringify(data, datas); // 响应请求，发送处理后的信息给客户端
 })
 
 // 修改个人预约预留信息

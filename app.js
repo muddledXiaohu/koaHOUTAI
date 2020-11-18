@@ -33,7 +33,8 @@ app
 	multipart: true,
     formidable: {
         uploadDir: path.join(__dirname,"static/image"),
-        keepExtensions: true
+        keepExtensions: true,
+        maxFileSize: 2*1024*1024,    // 设置上传文件大小最大限制，默认2M
     }
 }))
 .use(koa_static(__dirname,"public"))  // 指定 public文件托管

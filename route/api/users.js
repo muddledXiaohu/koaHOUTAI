@@ -23,6 +23,12 @@ var qr = require('qr-image');
 
 const uuid = require('node-uuid')
 
+
+// 查询全部考题信息
+router.get("/integKAOt", async (ctx) => {
+    const data = await DB.find('subject', {})
+    ctx.body = JSON.stringify(data); // 响应请求，发送处理后的信息给客户端
+})
 // =====================================================
 
 // 查询全部信息
@@ -159,91 +165,8 @@ router.post('/loginNumber', async ctx => {
     })
   })
 
-// =====================================================
 
-// 分数查询
-router.get("/fraction", async (ctx) => {
-    const data = await DB.find('fraction', {})
-    ctx.body = JSON.stringify(data); // 响应请求，发送处理后的信息给客户端
-})
-
-// id查询
-router.get("/fraction/:id", async (ctx) => {
-    let ids = ctx.params
-    let id = parseInt(ids.id)
-    await DB.find('fraction', {id: id}).then((data) => {
-        ctx.body = JSON.stringify(data); // 响应请求，发送处理后的信息给客户端
-    })
-})
-
-// 预约号登录查询
-// 用户登录
-router.post('/fractionss', async ctx => {
-    const data = ctx.request.body
-    console.log(data);
-    await DB.find('fraction', {number: Number(data.number)}).then( async (datas) => {
-        console.log(datas);
-        if (datas.length === 0) {
-            ctx.body = {
-                'code': 0,
-                'data': {},
-                'mesg': '没有该预约id，请预约',
-                status: 400
-            }    
-        }  else {
-            const token = await DB.find('fraction', {number: data.number})
-            ctx.body = {
-                'code': 1,
-                'data': {
-                    token
-                },
-                'mesg': '登录成功',
-                status: 200
-            }
-        }
-    })
-  })
-
-// 存入用户分数
-router.post("/fraction/establish", async (ctx) => {
-    let body = ctx.request.body
-    
-    const dataId = await DB.find('fraction', {})
-    const lastId = dataId[dataId.length - 1]
-    const ids = lastId.id + 1
-
-    const params = {
-        username:body.username,
-        fraction:body.fraction,
-        curriculum:body.curriculum,
-        id:ids 
-    }
-    const data = await DB.insert('fraction', params)
-    ctx.body = JSON.stringify(data); // 响应请求，发送处理后的信息给客户端
-})
-
-
-// 表单分页
-router.post("/fraction",async (ctx) => {
-    //koa-bodyparser解析前端参数
-    let reqParam= ctx.request.body;//
-    let querya = String(reqParam.params.query);//检索内容
-    let page = Number(reqParam.params.pagenum);//当前第几页
-    let size = Number(reqParam.params.pagesize);//每页显示的记录条数
-
-    const everyOne =  await DB.find('fraction') //表总记录数
-    //显示符合前端分页请求的列表查询
-    // let options = { "limit": size,"skip": (page-1)*size};
-    await DB.count('fraction', {username: new RegExp(querya)}, size, (page-1)*size).then((datas) => {
-        //返回给前端
-        ctx.body = JSON.stringify({totalpage:everyOne.length,pagenum:page,pagesize:size, users: datas})
-    })
-    //是否还有更多
-    // let hasMore=totle-(page-1)*size>size?true:false;
-  });
-
-// =====================================================
-
+//   =============================================
 // 生成uuid二维码
 var qwe = ''
 router.get('/RQCode', async ctx => {
@@ -263,20 +186,22 @@ router.get('/RQCode', async ctx => {
 
 
 // 扫码调用接口
+var RQZHuser = {}
 router.post('/RQLongin', async ctx => {
     let body = ctx.request.body
     let user = body.username
     const RQlgs = {[qwe]: user}
-    console.log(user, qwe)
+    RQZHuser = RQlgs
+    console.log(RQZHuser)
     await DB.insert('RQCodeId', RQlgs).then((data) => {
         ctx.body = JSON.stringify(data); // 响应请求，发送处理后的信息给客户端
     })
 })
 
 // 二维码扫码成功后查询返回对应账户
-router.get("/uuid/:id", async (ctx) => {
-    let ids = ctx.params
-    await DB.find('RQCodeId', ids.id).then((data) => {
+router.get("/uuid/ZHuser", async (ctx) => {
+    // let ids = ctx.params
+    await DB.find('RQCodeId', RQZHuser).then((data) => {
         ctx.body = JSON.stringify(data); // 响应请求，发送处理后的信息给客户端
     })
 })
@@ -304,7 +229,7 @@ router.post("/curriculim", async (ctx) => {
 })
 
 // id查询
-router.get("/user/:id", async (ctx) => {
+router.get("/knowleImguser/:id", async (ctx) => {
     let ids = ctx.params
     let id = parseInt(ids.id)
     await DB.find('user', {id: id}).then((data) => {
@@ -313,7 +238,7 @@ router.get("/user/:id", async (ctx) => {
 })
 
 // 修改课程
-router.post("/user/modify:id", async (ctx) => {
+router.post("/knowleImguser/modify:id", async (ctx) => {
     // 查询id
     let ids = ctx.params
     let id = parseInt(ids.id)
@@ -335,5 +260,32 @@ router.post("/user/modify:id", async (ctx) => {
     ctx.body = JSON.stringify(datas); // 响应请求，发送处理后的信息给客户端
 })
 
+
+// 创建课程
+router.post("/knowleImguser/establish", async (ctx) => {
+    let body = ctx.request.body
+    
+    const dataId = await DB.find('user', {})
+    const lastId = dataId[dataId.length - 1]
+    const ids = lastId.id + 1
+
+    const params = {
+            username: 'fire',
+            id: ids,
+            image: body.image,
+            content: body.content
+    }
+    const data = await DB.insert('user', params)
+    ctx.body = JSON.stringify(data); // 响应请求，发送处理后的信息给客户端
+})
+
+
+// 删除题目
+router.delete("/knowleImguser/:id", async (ctx) => {
+    let ids = ctx.params
+    let id = parseInt(ids.id)
+    const data = await DB.remove('user', {id: id})
+    ctx.body = JSON.stringify(data); // 响应请求，发送处理后的信息给客户端
+})
 
 module.exports = router
