@@ -106,6 +106,7 @@ router.post('/login', async ctx => {
     await DB.find('users', {username: data.username}).then((datas) => {
         for (const key in datas) {
             var password = datas[key].password
+            var username = datas[key].username
         }
         if (datas.length === 0) {
             ctx.body = {
@@ -127,7 +128,7 @@ router.post('/login', async ctx => {
             function getToken(payload = {}) {
                 return jwt.sign(payload, secret, { expiresIn: '4h' })
             }
-            let token = getToken({uid: "12306", username: "EsunR"}) // 将关键信息记录与 Token 内
+            let token = getToken({uid: "12306", username: username}) // 将关键信息记录与 Token 内
             console.log(token)
             ctx.body = {
                 'code': 1,
@@ -272,8 +273,12 @@ router.post("/knowleImguser/establish", async (ctx) => {
     const params = {
             username: 'fire',
             id: ids,
-            image: body.image,
-            content: body.content
+            image1: body.image1,
+            image2: body.image2,
+            image3: body.image3,
+            content1: body.content1,
+            content2: body.content2,
+            content3: body.content3
     }
     const data = await DB.insert('user', params)
     ctx.body = JSON.stringify(data); // 响应请求，发送处理后的信息给客户端

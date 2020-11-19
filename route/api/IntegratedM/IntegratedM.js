@@ -67,8 +67,11 @@ router.post('/fractionss', async ctx => {
 // 存入用户分数
 router.post("/fraction/establish", async (ctx) => {
   const data = ctx.request.body
-  console.log(data);
-  // ctx.body = JSON.stringify(data); // 响应请求，发送处理后的信息给客户端
+  const number = parseInt(data.number)
+  const fraction = parseInt(data.fraction)
+  await DB.update('fraction', {number: number}, {fraction: fraction}).then((datas) => {
+    ctx.body = JSON.stringify(datas); // 响应请求，发送处理后的信息给客户端
+  })
 })
 
 

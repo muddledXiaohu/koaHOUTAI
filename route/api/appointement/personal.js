@@ -30,27 +30,24 @@ router.get("/appointment/:id", async (ctx) => {
 // 个人预约
 router.post("/appointment/establish", async (ctx) => {
     let body = ctx.request.body
+    console.log(body)
     
     const dataId = await DB.find('appointment', {})
     const lastId = dataId[dataId.length - 1]
     const ids = lastId.id + 1
 
     // 随机数
-    var Num="";
-    for(var i=0;i<6;i++){
-        Num += Math.floor(Math.random()*10);
-    }
+    var Num = ('000000' + Math.floor(Math.random() * 999999)).slice(-6);
 
-    console.log(Num)
     const params = {
         username:body.name,
         mobile:body.mobile,
         curriculum:body.region,
         fraction: 0,
         // 预约号
-        number:Num,
-        // 对应账号id
-        userId: body._id,
+        number:Number(Num),
+        // // 对应账号id
+        // userId: body.id,
         type:1,
         id:ids
     }
@@ -100,8 +97,5 @@ router.delete("/appointment/remove/:id", async (ctx) => {
     const data = await DB.remove('appointment', {id: id})
     ctx.body = JSON.stringify(data); // 响应请求，发送处理后的信息给客户端
 })
-
-
-
 
 module.exports = router
